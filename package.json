@@ -1,0 +1,30 @@
+{
+  "name": "serverless-api-golang",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:debug": "GOARCH=amd64 GOOS=linux go build -gcflags=\"all=-N -l\" -o ./build/main ./cmd/main.go",
+    "build:dev": "GOARCH=amd64 GOOS=linux go build -o ./build/main ./cmd/main.go",
+    "deploy:dev": "npm run build:dev && npm run mvbuild:dev && export AWS_PROFILE=default && sls package -s dev && sls deploy -s dev --package .serverless",
+    "remove:dev": "export AWS_PROFILE=default && sls remove -s dev",
+    "set:ports": "export _LAMBDA_SERVER_PORT=3000 && export AWS_LAMBDA_RUNTIME_API=localhost:3000",
+    "debug:local": "npm run set:ports && sls offline start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edroch/serverless-api-golang.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/edroch/serverless-api-golang/issues"
+  },
+  "homepage": "https://github.com/edroch/serverless-api-golang#readme",
+  "dependencies": {
+    "serverless": "^3.35.1"
+  },
+  "devDependencies": {
+    "serverless-offline": "^13.2.0"
+  }
+}

@@ -1,0 +1,62 @@
+service: ht-serverless-authorizer
+
+frameworkVersion: "3"
+
+plugins:
+  - serverless-offline
+
+# serverless-webpack configuration for ECMC6
+# Enable auto-packing of external modules
+# Multiple deploy stages
+# e.g. sls deploy --stage staging
+custom:
+  defaultStage: dev
+  stage: ${sls:stage}
+  # serverless-offline:
+  #   debugPort: 5858
+  profiles:
+    # prod: personalProfile
+    # staging: personalProfile
+    dev: personalProfile
+
+provider:
+  name: aws
+  runtime: go1.x
+  region: us-east-1
+  environment:
+    # DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    # - Effect: Allow
+    #   Action:
+    #     - dynamodb:Query
+    #     - dynamodb:Scan
+    #     - dynamodb:GetItem
+    #     - dynamodb:PutItem
+    #     - dynamodb:UpdateItem
+    #     - dynamodb:DeleteItem
+    #   Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+    # - Effect: Allow
+    #   Action:
+    #     - dynamodb:Query
+    #     - dynamodb:Scan
+    #   Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}/index/*"
+
+package:
+ exclude:
+ include:
+   - ./build/main
+
+functions:
+  # any:
+  #   handler: build/main
+  #   events:
+  #     - http:
+  #         path: users
+  #         method: any
+
+  authorize:
+    handler: build/main
+    events:
+      - http:
+          path: users/{id}
+          method: get
